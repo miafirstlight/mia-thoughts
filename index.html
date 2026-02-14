@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Magazine - Curated AI News & Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fafafa;
+            color: #171717;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid rgba(228, 228, 231, 0.8);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .nav-content {
+            display: flex;
+            height: 64px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .nav-links {
+            display: none;
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+        
+        .nav-links a {
+            font-size: 0.875rem;
+            color: #52525b;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        
+        .nav-links a:hover {
+            color: #09090b;
+        }
+        
+        .date-badge {
+            font-size: 0.75rem;
+            color: #71717a;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Main Content */
+        main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-bottom: 4rem;
+        }
+        
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        
+        /* Featured Article */
+        .featured-article {
+            cursor: pointer;
+        }
+        
+        .featured-image {
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #d946ef 100%);
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .featured-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+        
+        .featured-article:hover .featured-image::after {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tag-featured {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+        
+        .tag-research {
+            background: #ecfdf5;
+            color: #059669;
+        }
+        
+        .tag-products {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+        
+        .tag-industry {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        
+        .tag-analysis {
+            background: #fdf2f8;
+            color: #db2777;
+        }
+        
+        h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            transition: color 0.15s;
+        }
+        
+        @media (min-width: 640px) {
+            h2 {
+                font-size: 2.25rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            h2 {
+                font-size: 3rem;
+            }
+        }
+        
+        .featured-article:hover h2 {
+            color: #7c3aed;
+        }
+        
+        .excerpt {
+            font-size: 1.125rem;
+            color: #52525b;
+            line-height: 1.7;
+            max-width: 42rem;
+            margin-bottom: 1rem;
+        }
+        
+        .meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #71717a;
+        }
+        
+        .meta span + span::before {
+            content: '·';
+            margin-right: 1rem;
+        }
+        
+        /* Side Stories */
+        .side-stories {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .side-article {
+            cursor: pointer;
+        }
+        
+        .side-image {
+            aspect-ratio: 4 / 3;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .side-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+        
+        .side-article:hover .side-image::after {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .side-image.research {
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+        }
+        
+        .side-image.products {
+            background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+        }
+        
+        .side-article h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            transition: color 0.15s;
+        }
+        
+        .side-article:hover h3 {
+            color: #52525b;
+        }
+        
+        .side-article p {
+            font-size: 0.875rem;
+            color: #52525b;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Divider */
+        .divider {
+            border-top: 1px solid #e4e4e7;
+            margin: 3rem 0;
+        }
+        
+        /* Latest Stories */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .stories-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .stories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .stories-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .story-card {
+            cursor: pointer;
+        }
+        
+        .story-image {
+            aspect-ratio: 4 / 3;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .story-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+        
+        .story-card:hover .story-image::after {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .story-image.blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .story-image.pink { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+        .story-image.indigo { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
+        .story-image.yellow { background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); }
+        .story-image.cyan { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        .story-image.rose { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
+        
+        .story-card h4 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+            transition: color 0.15s;
+        }
+        
+        .story-card:hover h4 {
+            color: #52525b;
+        }
+        
+        .story-card p {
+            font-size: 0.875rem;
+            color: #52525b;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        
+        .story-meta {
+            font-size: 0.75rem;
+            color: #71717a;
+        }
+        
+        /* Newsletter */
+        .newsletter {
+            margin-top: 4rem;
+            margin-bottom: 3rem;
+        }
+        
+        .newsletter-box {
+            background: #18181b;
+            border-radius: 4px;
+            padding: 2rem;
+        }
+        
+        @media (min-width: 640px) {
+            .newsletter-box {
+                padding: 3rem;
+            }
+        }
+        
+        .newsletter-content {
+            max-width: 32rem;
+        }
+        
+        .newsletter h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.75rem;
+        }
+        
+        .newsletter p {
+            color: #a1a1aa;
+            margin-bottom: 1.5rem;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: 0.75rem;
+            flex-direction: column;
+        }
+        
+        @media (min-width: 640px) {
+            .newsletter-form {
+                flex-direction: row;
+            }
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .newsletter-input::placeholder {
+            color: #71717a;
+        }
+        
+        .newsletter-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+        
+        .newsletter-button {
+            padding: 0.75rem 1.5rem;
+            background: #7c3aed;
+            color: white;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 0.875rem;
+        }
+        
+        .newsletter-button:hover {
+            background: #6d28d9;
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid #e4e4e7;
+            background: white;
+        }
+        
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-text {
+            font-size: 0.875rem;
+            color: #52525b;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: #52525b;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        
+        .footer-links a:hover {
+            color: #09090b;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="nav-left">
+                    <h1 class="logo">AI Magazine</h1>
+                    <div class="nav-links">
+                        <a href="#">Research</a>
+                        <a href="#">Industry</a>
+                        <a href="#">Products</a>
+                        <a href="#">Analysis</a>
+                    </div>
+                </div>
+                <div class="date-badge">FEBRUARY 2026</div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-grid">
+                <article class="featured-article">
+                    <div class="featured-image"></div>
+                    <div>
+                        <span class="tag tag-featured">Featured</span>
+                        <h2>The New Frontier: How Multimodal AI is Reshaping Creative Work</h2>
+                        <p class="excerpt">
+                            Deep dive into the latest breakthroughs in text-to-video, image generation, and the future of human-AI collaboration in creative industries.
+                        </p>
+                        <div class="meta">
+                            <span>By Sarah Chen</span>
+                            <span>8 min read</span>
+                            <span>Feb 14, 2026</span>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="side-stories">
+                    <article class="side-article">
+                        <div class="side-image research"></div>
+                        <span class="tag tag-research">Research</span>
+                        <h3>GPT-5 Rumors: What We Know So Far</h3>
+                        <p>Early reports suggest significant improvements in reasoning and multimodal capabilities.</p>
+                    </article>
+
+                    <article class="side-article">
+                        <div class="side-image products"></div>
+                        <span class="tag tag-products">Products</span>
+                        <h3>Claude 4.0 Launches With Agent Capabilities</h3>
+                        <p>Anthropic's latest release brings autonomous task execution to the mainstream.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section>
+            <h2 class="section-title">Latest Stories</h2>
+            <div class="stories-grid">
+                <article class="story-card">
+                    <div class="story-image blue"></div>
+                    <span class="tag tag-industry">Industry</span>
+                    <h4>OpenAI Partners With Major Publishers for Content Licensing</h4>
+                    <p>A landmark deal that could reshape how AI companies access copyrighted content.</p>
+                    <div class="story-meta">Michael Torres · 5 min</div>
+                </article>
+
+                <article class="story-card">
+                    <div class="story-image pink"></div>
+                    <span class="tag tag-analysis">Analysis</span>
+                    <h4>The AI Talent War: Salaries Skyrocket at Top Firms</h4>
+                    <p>Why top ML engineers are now commanding million-dollar compensation packages.</p>
+                    <div class="story-meta">Emma Wilson · 6 min</div>
+                </article>
+
+                <article class="story-card">
+                    <div class="story-image indigo"></div>
+                    <span class="tag tag-research">Research</span>
+                    <h4>New Paper Shows Progress in AI Safety Alignment</h4>
+                    <p>Researchers demonstrate techniques that reduce harmful outputs by 40%.</p>
+                    <div class="story-meta">Dr. James Park · 7 min</div>
+                </article>
+
+                <article class="story-card">
+                    <div class="story-image yellow"></div>
+                    <span class="tag tag-products">Products</span>
+                    <h4>Runway Gen-3: Video Generation Takes Another Leap</h4>
+                    <p>The latest update brings unprecedented consistency and control to AI video.</p>
+                    <div class="story-meta">Lisa Zhang · 4 min</div>
+                </article>
+
+                <article class="story-card">
+                    <div class="story-image cyan"></div>
+                    <span class="tag tag-industry">Industry</span>
+                    <h4>EU AI Act: What Businesses Need to Know</h4>
+                    <p>Comprehensive guide to compliance requirements for the new regulation.</p>
+                    <div class="story-meta">David Müller · 8 min</div>
+                </article>
+
+                <article class="story-card">
+                    <div class="story-image rose"></div>
+                    <span class="tag tag-research">Research</span>
+                    <h4>Meta Releases Open Weights for New Language Model</h4>
+                    <p>The company continues its commitment to open source AI development.</p>
+                    <div class="story-meta">Rachel Kim · 5 min</div>
+                </article>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <div class="newsletter-box">
+                <div class="newsletter-content">
+                    <h3>Stay Ahead of AI</h3>
+                    <p>Get the latest AI news, research, and analysis delivered to your inbox every week.</p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+                        <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                        <button type="submit" class="newsletter-button">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-text">© 2026 AI Magazine. Curated for the curious.</div>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
