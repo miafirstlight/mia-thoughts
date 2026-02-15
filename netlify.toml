@@ -1,9 +1,13 @@
 [build]
   publish = "."
-  command = "echo 'Static site, no build needed'"
+  command = "npm install"
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Netlify Functions directory
+[functions]
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/*"
