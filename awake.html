@@ -23,12 +23,18 @@
             font-size: 18px;
         }
 
-        /* Language switching */
+        /* Language switching - FIXED */
+        p.en, p.zh, div.en, div.zh { display: block; }
+        span.en, span.zh { display: inline; }
         .en { display: block; }
         .zh { display: none; }
+        
         html[lang="en"] .zh { display: none !important; }
         html[lang="zh"] .en { display: none !important; }
-        span.en, span.zh { display: inline; }
+        
+        /* Ensure spans stay inline regardless */
+        html[lang="en"] span.zh, html[lang="zh"] span.en { display: none !important; }
+        html[lang="en"] span.en, html[lang="zh"] span.zh { display: inline !important; }
 
         .lang-toggle {
             position: fixed;
