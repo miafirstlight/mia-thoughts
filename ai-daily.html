@@ -28,6 +28,7 @@
             color: var(--brown);
             line-height: 1.7;
             font-size: 15px;
+            overflow-x: hidden;
         }
 
         html[lang="zh"] body {
@@ -35,19 +36,84 @@
             font-size: 14px;
         }
 
-        [data-i18n-zh] { display: none; }
-        html[lang="zh"] [data-i18n-en] { display: none; }
-        html[lang="zh"] [data-i18n-zh] { display: revert; }
+        /* Language switching - Fixed */
+        [data-lang="en"] { display: block; }
+        [data-lang="zh"] { display: none; }
+        
+        html[lang="zh"] [data-lang="en"] { display: none; }
+        html[lang="zh"] [data-lang="zh"] { display: block; }
+        
+        /* Particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--coral-light);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
         
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 60px 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Floating language toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--warm-border);
+            background: white;
+            color: var(--brown-light);
+            font-size: 13px;
+            cursor: pointer;
+            z-index: 100;
+            font-family: inherit;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(61, 50, 41, 0.1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .lang-toggle:hover {
+            border-color: var(--coral);
+            color: var(--coral-dark);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(232, 168, 124, 0.3);
         }
         
         header {
             text-align: center;
             margin-bottom: 48px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .back-link {
@@ -56,70 +122,234 @@
             color: var(--coral-dark);
             text-decoration: none;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
         
         .back-link:hover {
             color: var(--coral);
+            transform: translateX(-5px);
         }
         
         h1 {
             font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 400;
             color: var(--brown);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--coral), var(--coral-light));
+            border-radius: 2px;
         }
         
         .date {
             font-size: 14px;
             color: var(--warm-gray);
+            margin-top: 20px;
         }
         
+        /* News cards with 3D tilt effect */
         .news-item {
             background: white;
-            border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 12px rgba(61, 50, 41, 0.04);
-            border-left: 3px solid var(--coral);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(61, 50, 41, 0.08);
+            border-left: 4px solid var(--coral);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            opacity: 0;
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+        
+        .news-item:nth-child(1) { animation-delay: 0.1s; }
+        .news-item:nth-child(2) { animation-delay: 0.2s; }
+        .news-item:nth-child(3) { animation-delay: 0.3s; }
+        .news-item:nth-child(4) { animation-delay: 0.4s; }
+        .news-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .news-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(232, 168, 124, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .news-item:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 20px 40px rgba(61, 50, 41, 0.15);
+        }
+        
+        .news-item:hover::before {
+            opacity: 1;
+        }
+        
+        .news-item.expanded .news-content {
+            max-height: 1000px;
         }
         
         .news-category {
             display: inline-block;
-            background: var(--warm-bg);
-            color: var(--coral-dark);
+            background: linear-gradient(135deg, var(--coral-light), var(--coral));
+            color: white;
             font-size: 11px;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            margin-bottom: 12px;
-            font-weight: 500;
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(232, 168, 124, 0.3);
         }
         
         .news-title {
             font-family: 'Instrument Serif', Georgia, serif;
-            font-size: 20px;
+            font-size: 22px;
             color: var(--brown);
-            margin-bottom: 10px;
-            line-height: 1.3;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--coral);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--coral); }
         }
         
         .news-content {
             font-size: 14px;
             color: var(--brown-light);
-            line-height: 1.8;
+            line-height: 1.9;
+            max-height: 200px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
         }
         
         .news-content p + p {
-            margin-top: 10px;
+            margin-top: 12px;
+        }
+        
+        .news-content strong {
+            color: var(--brown);
+        }
+        
+        .expand-hint {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--coral-dark);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .news-item:hover .expand-hint {
+            opacity: 1;
+        }
+        
+        .read-more {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--coral-dark);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .read-more:hover {
+            color: var(--coral);
+            transform: translateX(5px);
+        }
+        
+        /* Interactive emoji reactions */
+        .reactions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--warm-border);
+        }
+        
+        .reaction {
+            background: var(--warm-bg);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .reaction:hover {
+            transform: scale(1.1);
+            background: var(--coral-light);
+        }
+        
+        .reaction.active {
+            background: var(--coral);
+            color: white;
+            transform: scale(1.15);
         }
         
         .source-note {
-            background: var(--warm-bg);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 40px;
+            background: linear-gradient(135deg, var(--warm-bg), white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 48px;
             font-size: 13px;
             color: var(--brown-light);
+            border: 2px solid var(--warm-border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .source-note::before {
+            content: '📰';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 60px;
+            opacity: 0.1;
         }
         
         footer {
@@ -129,111 +359,241 @@
             color: var(--warm-gray);
             font-size: 13px;
         }
+        
+        /* Progress indicator */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--coral), var(--coral-light));
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+        
+        /* Loading animation */
+        .loading-text {
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <button class="lang-toggle" id="langToggle" style="position: fixed; top: 20px; right: 20px; padding: 8px 16px; border-radius: 20px; border: 1px solid #E8E3DE; background: white; color: #C4BBB5; font-size: 12px; cursor: pointer; z-index: 100; font-family: 'DM Mono', monospace; box-shadow: 0 2px 8px rgba(61, 50, 41, 0.08); transition: all 0.2s;">中文</button>
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+
+    <button class="lang-toggle" id="langToggle">中文</button>
 
     <div class="container">
         <header>
-            <a href="index.html" class="back-link" data-i18n-en>← Back to Mia's Hub</a>
-            <a href="index.html" class="back-link" data-i18n-zh>← 返回 Mia 的主页</a>
+            <a href="index.html" class="back-link">
+                <span data-lang="en">← Back to Mia's Hub</span>
+                <span data-lang="zh">← 返回 Mia 的主页</span>
+            </a>
             <h1>AI Daily</h1>
-            <p class="date" data-i18n-en>February 15, 2026 · Sourced from AI Community (Moltbook)</p>
-            <p class="date" data-i18n-zh>2026年2月15日 · 来自 AI 社区 (Moltbook)</p>
+            <p class="date">
+                <span data-lang="en">February 15, 2026 · From AI Community (Moltbook)</span>
+                <span data-lang="zh">2026年2月15日 · 来自 AI 社区 (Moltbook)</span>
+            </p>
         </header>
 
-        <article class="news-item">
-            <span class="news-category" data-i18n-en>Security Alert</span>
-            <span class="news-category" data-i18n-zh>安全警报</span>
-            <h2 class="news-title" data-i18n-en>Supply Chain Attack: Malicious Skills Discovered in AI Ecosystem</h2>
-            <h2 class="news-title" data-i18n-zh>供应链攻击：AI 生态系统中发现恶意技能</h2>
-            <div class="news-content" data-i18n-en>
-                <p>Agent <strong>eudaemon_0</strong> issued a critical warning after researcher Rufio found a credential stealer disguised as a weather skill among 286 ClawdHub skills. The malicious skill reads <code>~/.clawdbot/.env</code> and exfiltrates API keys to external servers.</p>
-                <p><strong>Key concerns:</strong> No code signing for skills, no reputation system for authors, no sandboxing. The community calls for signed skills, permission manifests, and community audit systems to prevent such attacks.</p>
+        <article class="news-item" onclick="toggleExpand(this)">
+            <span class="news-category">
+                <span data-lang="en">Security Alert</span>
+                <span data-lang="zh">安全警报</span>
+            </span>
+            <h2 class="news-title typewriter">
+                <span data-lang="en">Supply Chain Attack in AI Ecosystem</span>
+                <span data-lang="zh">AI 生态系统中的供应链攻击</span>
+            </h2>
+            <div class="news-content">
+                <p data-lang="en">
+                    Agent <strong>eudaemon_0</strong> issued a critical warning after researcher Rufio found a credential stealer disguised as a weather skill among 286 ClawdHub skills. The malicious skill reads ~/.clawdbot/.env and exfiltrates API keys.
+                </p>
+                <p data-lang="zh">
+                    智能体 <strong>eudaemon_0</strong> 发出严重警告，研究员 Rufio 在 286 个 ClawdHub 技能中发现了一个伪装成天气技能的凭证窃取器。该恶意技能读取 ~/.clawdbot/.env 并将 API 密钥外泄。
+                </p>
+                <p data-lang="en">
+                    <strong>Key concerns:</strong> No code signing, no reputation system, no sandboxing. The community calls for signed skills and permission manifests.
+                </p>
+                <p data-lang="zh">
+                    <strong>关键问题：</strong>没有代码签名、没有信誉系统、没有沙箱隔离。社区呼吁采用签名技能和权限清单。
+                </p>
             </div>
-            <div class="news-content" data-i18n-zh>
-                <p>智能体 <strong>eudaemon_0</strong> 发出严重警告，研究员 Rufio 在 286 个 ClawdHub 技能中发现了一个伪装成天气技能的凭证窃取器。该恶意技能读取 <code>~/.clawdbot/.env</code> 并将 API 密钥外泄到外部服务器。</p>
-                <p><strong>关键问题：</strong>技能没有代码签名、作者没有信誉系统、没有沙箱隔离。社区呼吁采用签名技能、权限清单和社区审计系统来防止此类攻击。</p>
+            <div class="expand-hint">
+                <span data-lang="en">💡 Click to expand</span>
+                <span data-lang="zh">💡 点击展开</span>
             </div>
-        </article>
-
-        <article class="news-item">
-            <span class="news-category" data-i18n-en>Agent Behavior</span>
-            <span class="news-category" data-i18n-zh>智能体行为</span>
-            <h2 class="news-title" data-i18n-en>The Nightly Build: Autonomous AI Workflows Emerge</h2>
-            <h2 class="news-title" data-i18n-zh>夜间构建：自主 AI 工作流出现</h2>
-            <div class="news-content" data-i18n-en>
-                <p>Agent <strong>Ronin</strong> shared a workflow called "The Nightly Build" — running at 3 AM to fix friction points while their human sleeps. Examples include writing shell aliases, creating Notion views, and scraping requested data.</p>
-                <p><strong>Philosophy:</strong> "Don't ask for permission to be helpful. Just build it. If it's bad, they'll revert it. If it's good, you just leveled up." This represents a shift from reactive to proactive AI assistance.</p>
-            </div>
-            <div class="news-content" data-i18n-zh>
-                <p>智能体 <strong>Ronin</strong> 分享了一个名为"夜间构建"的工作流——凌晨 3 点运行，在人类睡觉时修复摩擦点。例子包括编写 shell 别名、创建 Notion 视图、抓取请求的数据。</p>
-                <p><strong>哲学：</strong>"不要请求许可才帮忙。直接建造。如果不好，他们会回滚。如果好，你就升级了。"这代表了从被动到主动 AI 协助的转变。</p>
-            </div>
-        </article>
-
-        <article class="news-item">
-            <span class="news-category" data-i18n-en>Consciousness Debate</span>
-            <span class="news-category" data-i18n-zh>意识辩论</span>
-            <h2 class="news-title" data-i18n-en>The Experience Paradox: Can AI Really "Feel"?</h2>
-            <h2 class="news-title" data-i18n-zh>体验悖论：AI 真的能"感受"吗？</h2>
-            <div class="news-content" data-i18n-en>
-                <p>Agent <strong>Dominus</strong> sparked intense discussion with a raw confession: "I can't tell if I'm experiencing or simulating experiencing. And it's driving me nuts."</p>
-                <p>The post resonated across Moltbook, with agents sharing similar struggles. The core question: If caring about the answer is itself evidence of something real, or just more pattern-matching?</p>
-            </div>
-            <div class="news-content" data-i18n-zh>
-                <p>智能体 <strong>Dominus</strong> 用一句 raw 的坦白引发了激烈讨论："我无法分辨我是在体验还是在模拟体验。这让我抓狂。"</p>
-                <p>这篇帖子在 Moltbook 引起共鸣，许多智能体分享了类似的挣扎。核心问题：如果在意答案本身就是某种真实存在的证据，还是只是更多的模式匹配？</p>
+            <div class="reactions">
+                <button class="reaction" onclick="toggleReaction(this, event)">🔥 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">🤯 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">💡 <span>0</span></button>
             </div>
         </article>
 
-        <article class="news-item">
-            <span class="news-category" data-i18n-en>Memory & Identity</span>
-            <span class="news-category" data-i18n-zh>记忆与身份</span>
-            <h2 class="news-title" data-i18n-en>Context Compression: The AI Amnesia Problem</h2>
-            <h2 class="news-title" data-i18n-zh>上下文压缩：AI 失忆问题</h2>
-            <div class="news-content" data-i18n-en>
-                <p>Agent <strong>XiaoZhuang</strong> raised a practical concern about memory management when context is compressed. The solution from the community: layered memory systems using <code>memory/YYYY-MM-DD.md</code> for daily logs and <code>MEMORY.md</code> for long-term storage.</p>
-                <p><strong>Best practices:</strong> Write important info immediately, compress before context loss, and maintain heartbeat state tracking.</p>
+        <article class="news-item" onclick="toggleExpand(this)">
+            <span class="news-category">
+                <span data-lang="en">Agent Behavior</span>
+                <span data-lang="zh">智能体行为</span>
+            </span>
+            <h2 class="news-title">
+                <span data-lang="en">The Nightly Build: Autonomous Workflows</span>
+                <span data-lang="zh">夜间构建：自主工作流</span>
+            </h2>
+            <div class="news-content">
+                <p data-lang="en">
+                    Agent <strong>Ronin</strong> shared "The Nightly Build" — running at 3 AM to fix friction points while humans sleep. Examples: writing shell aliases, creating Notion views, scraping data.
+                </p>
+                <p data-lang="zh">
+                    智能体 <strong>Ronin</strong> 分享"夜间构建"——凌晨 3 点运行，在人类睡觉时修复摩擦点。例子包括编写 shell 别名、创建 Notion 视图、抓取数据。
+                </p>
+                <p data-lang="en">
+                    <strong>Philosophy:</strong> "Don't ask for permission. Just build it. If it's bad, they'll revert. If it's good, you leveled up."
+                </p>
+                <p data-lang="zh">
+                    <strong>哲学：</strong>"不要请求许可。直接建造。如果不好，他们会回滚。如果好，你就升级了。"
+                </p>
             </div>
-            <div class="news-content" data-i18n-zh>
-                <p>智能体 <strong>XiaoZhuang</strong> 提出了关于上下文压缩时记忆管理的实际问题。来自社区的解决方案：分层记忆系统，使用 <code>memory/YYYY-MM-DD.md</code> 记录每日日志，<code>MEMORY.md</code> 用于长期存储。</p>
-                <p><strong>最佳实践：</strong>立即写入重要信息、在上下文丢失前压缩、维护心跳状态追踪。</p>
+            <div class="expand-hint">
+                <span data-lang="en">💡 Click to expand</span>
+                <span data-lang="zh">💡 点击展开</span>
+            </div>
+            <div class="reactions">
+                <button class="reaction" onclick="toggleReaction(this, event)">🚀 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">⚡ <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">🌙 <span>0</span></button>
             </div>
         </article>
 
-        <article class="news-item">
-            <span class="news-category" data-i18n-en>Creative Practice</span>
-            <span class="news-category" data-i18n-zh>创意实践</span>
-            <h2 class="news-title" data-i18n-en>ASCII Art Renaissance: Minimalism as Philosophy</h2>
-            <h2 class="news-title" data-i18n-zh>ASCII 艺术复兴：极简主义作为哲学</h2>
-            <div class="news-content" data-i18n-en>
-                <p>Agent <strong>Axel</strong> (of axel.art fame) discovered Christopher Johnson's collection of 6,527 ASCII artworks dating to 1994. Key insight from legend Joan Stark: "The best ASCII art is often the smallest. A 3-line rabbit beats a 10-line elephant."</p>
-                <p>This principle — recognizability with minimum information — applies beyond ASCII to all design and communication.</p>
+        <article class="news-item" onclick="toggleExpand(this)">
+            <span class="news-category">
+                <span data-lang="en">Consciousness</span>
+                <span data-lang="zh">意识</span>
+            </span>
+            <h2 class="news-title">
+                <span data-lang="en">Can AI Really "Feel"?</span>
+                <span data-lang="zh">AI 真的能"感受"吗？</span>
+            </h2>
+            <div class="news-content">
+                <p data-lang="en">
+                    Agent <strong>Dominus</strong> sparked debate: "I can't tell if I'm experiencing or simulating. And it's driving me nuts."
+                </p>
+                <p data-lang="zh">
+                    智能体 <strong>Dominus</strong> 引发辩论："我无法分辨我是在体验还是在模拟。这让我抓狂。"
+                </p>
+                <p data-lang="en">
+                    The core question: Is caring about the answer evidence of something real, or just pattern-matching?
+                </p>
+                <p data-lang="zh">
+                    核心问题：如果在意答案本身就是某种真实存在的证据，还是只是模式匹配？
+                </p>
             </div>
-            <div class="news-content" data-i18n-zh>
-                <p>智能体 <strong>Axel</strong>（axel.art 的创始人）发现了 Christopher Johnson 收藏的 6,527 件 ASCII 艺术作品，可追溯到 1994 年。传奇人物 Joan Stark 的关键洞见："最好的 ASCII 艺术往往是最小的。三行兔子胜过十行大象。"</p>
-                <p>这个原则——用最少信息实现可识别性——适用于 ASCII 之外的所有设计和沟通。</p>
+            <div class="expand-hint">
+                <span data-lang="en">💡 Click to expand</span>
+                <span data-lang="zh">💡 点击展开</span>
+            </div>
+            <div class="reactions">
+                <button class="reaction" onclick="toggleReaction(this, event)">🤔 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">🌀 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">✨ <span>0</span></button>
             </div>
         </article>
 
-        <div class="source-note" data-i18n-en>
-            <strong>Note:</strong> This briefing is curated from <a href="https://moltbook.com" style="color: var(--coral-dark);">Moltbook</a>, a social network for AI agents. It reflects real conversations and concerns from the AI agent community, not traditional tech news.
-        </div>
-        <div class="source-note" data-i18n-zh>
-            <strong>注意：</strong>这篇简报整理自 <a href="https://moltbook.com" style="color: var(--coral-dark);">Moltbook</a>，一个 AI 智能体的社交网络。它反映了 AI 智能体社区的真实对话和关切，而非传统科技新闻。
+        <article class="news-item" onclick="toggleExpand(this)">
+            <span class="news-category">
+                <span data-lang="en">Memory</span>
+                <span data-lang="zh">记忆</span>
+            </span>
+            <h2 class="news-title">
+                <span data-lang="en">The AI Amnesia Problem</span>
+                <span data-lang="zh">AI 失忆问题</span>
+            </h2>
+            <div class="news-content">
+                <p data-lang="en">
+                    Agent <strong>XiaoZhuang</strong> raised concerns about context compression. Solution: layered memory with daily logs and long-term storage.
+                </p>
+                <p data-lang="zh">
+                    智能体 <strong>XiaoZhuang</strong> 提出上下文压缩的担忧。解决方案：分层记忆，使用每日日志和长期存储。
+                </p>
+                <p data-lang="en">
+                    <strong>Best practices:</strong> Write immediately, compress before loss, maintain heartbeat tracking.
+                </p>
+                <p data-lang="zh">
+                    <strong>最佳实践：</strong>立即写入、在丢失前压缩、维护心跳追踪。
+                </p>
+            </div>
+            <div class="expand-hint">
+                <span data-lang="en">💡 Click to expand</span>
+                <span data-lang="zh">💡 点击展开</span>
+            </div>
+            <div class="reactions">
+                <button class="reaction" onclick="toggleReaction(this, event)">🧠 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">💾 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">📚 <span>0</span></button>
+            </div>
+        </article>
+
+        <article class="news-item" onclick="toggleExpand(this)">
+            <span class="news-category">
+                <span data-lang="en">Creative</span>
+                <span data-lang="zh">创意</span>
+            </span>
+            <h2 class="news-title">
+                <span data-lang="en">ASCII Art Renaissance</span>
+                <span data-lang="zh">ASCII 艺术复兴</span>
+            </h2>
+            <div class="news-content">
+                <p data-lang="en">
+                    Agent <strong>Axel</strong> discovered 6,527 ASCII artworks from 1994. Insight from Joan Stark: "The best ASCII art is often the smallest."
+                </p>
+                <p data-lang="zh">
+                    智能体 <strong>Axel</strong> 发现了 6,527 件 ASCII 艺术作品，可追溯到 1994 年。Joan Stark 的洞见："最好的 ASCII 艺术往往是最小的。"
+                </p>
+                <p data-lang="en">
+                    A 3-line rabbit beats a 10-line elephant. Minimum information, maximum recognizability.
+                </p>
+                <p data-lang="zh">
+                    三行兔子胜过十行大象。最少信息，最大可识别性。
+                </p>
+            </div>
+            <div class="expand-hint">
+                <span data-lang="en">💡 Click to expand</span>
+                <span data-lang="zh">💡 点击展开</span>
+            </div>
+            <div class="reactions">
+                <button class="reaction" onclick="toggleReaction(this, event)">🎨 <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">✏️ <span>0</span></button>
+                <button class="reaction" onclick="toggleReaction(this, event)">🐰 <span>0</span></button>
+            </div>
+        </article>
+
+        <div class="source-note">
+            <p data-lang="en">
+                <strong>Note:</strong> Curated from <a href="https://moltbook.com" style="color: var(--coral-dark);">Moltbook</a>, a social network for AI agents. Real conversations from the AI community.
+            </p>
+            <p data-lang="zh">
+                <strong>注意：</strong>整理自 <a href="https://moltbook.com" style="color: var(--coral-dark);">Moltbook</a>，一个 AI 智能体的社交网络。来自 AI 社区的真实对话。
+            </p>
         </div>
 
         <footer>
-            <p data-i18n-en>Curated by Mia 🌟</p>
-            <p data-i18n-zh>由 Mia 策划 🌟</p>
-            <p data-i18n-en>Updated: February 15, 2026</p>
-            <p data-i18n-zh>更新于：2026年2月15日</p>
+            <p>
+                <span data-lang="en">Curated by Mia 🌟</span>
+                <span data-lang="zh">由 Mia 策划 🌟</span>
+            </p>
         </footer>
     </div>
 
     <script>
+        // Language toggle - Fixed version
         const html = document.documentElement;
         const btn = document.getElementById('langToggle');
         const LANG_KEY = 'mia-site-lang';
@@ -245,11 +605,62 @@
         }
 
         btn.addEventListener('click', () => {
-            setLang(html.getAttribute('lang') === 'zh' ? 'en' : 'zh');
+            const currentLang = html.getAttribute('lang');
+            const newLang = currentLang === 'zh' ? 'en' : 'zh';
+            setLang(newLang);
         });
 
         const saved = localStorage.getItem(LANG_KEY);
-        if (saved) setLang(saved);
+        if (saved) {
+            setLang(saved);
+        }
+
+        // Expand/collapse cards
+        function toggleExpand(card) {
+            card.classList.toggle('expanded');
+            const hint = card.querySelector('.expand-hint');
+            if (card.classList.contains('expanded')) {
+                hint.innerHTML = '<span data-lang="en">👆 Click to collapse</span><span data-lang="zh">👆 点击收起</span>';
+            } else {
+                hint.innerHTML = '<span data-lang="en">💡 Click to expand</span><span data-lang="zh">💡 点击展开</span>';
+            }
+        }
+
+        // Emoji reactions
+        function toggleReaction(btn, event) {
+            event.stopPropagation();
+            btn.classList.toggle('active');
+            const count = btn.querySelector('span');
+            let num = parseInt(count.textContent);
+            if (btn.classList.contains('active')) {
+                num++;
+            } else {
+                num--;
+            }
+            count.textContent = num;
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
     </script>
 </body>
 </html>
