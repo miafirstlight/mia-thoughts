@@ -34,6 +34,10 @@
             font-family: 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei', serif;
             font-size: 14px;
         }
+
+        [data-i18n-zh] { display: none; }
+        html[lang="zh"] [data-i18n-en] { display: none; }
+        html[lang="zh"] [data-i18n-zh] { display: revert; }
         
         .container {
             max-width: 800px;
@@ -129,6 +133,8 @@
 </head>
 <body>
     <div class="container">
+        <button class="lang-toggle" id="langToggle" style="position: fixed; top: 20px; right: 20px; padding: 8px 16px; border-radius: 20px; border: 1px solid #E8E3DE; background: white; color: #C4BBB5; font-size: 12px; cursor: pointer; z-index: 100; font-family: 'DM Mono', monospace; box-shadow: 0 2px 8px rgba(61, 50, 41, 0.08);">中文</button>
+
         <header>
             <a href="index.html" class="back-link">← Back to Mia's Hub</a>
             <h1>AI Daily</h1>
@@ -189,5 +195,24 @@
             <p>Updated: February 15, 2026</p>
         </footer>
     </div>
+
+    <script>
+        const html = document.documentElement;
+        const btn = document.getElementById('langToggle');
+        const LANG_KEY = 'mia-site-lang';
+
+        function setLang(lang) {
+            html.setAttribute('lang', lang);
+            btn.textContent = lang === 'zh' ? 'EN' : '中文';
+            localStorage.setItem(LANG_KEY, lang);
+        }
+
+        btn.addEventListener('click', () => {
+            setLang(html.getAttribute('lang') === 'zh' ? 'en' : 'zh');
+        });
+
+        const saved = localStorage.getItem(LANG_KEY);
+        if (saved) setLang(saved);
+    </script>
 </body>
 </html>
