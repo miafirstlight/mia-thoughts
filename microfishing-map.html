@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>地图 - MicroFishing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(30, 30, 45, 0.6);
+            --accent-pink: #ff6b9d;
+            --accent-purple: #c084fc;
+            --accent-blue: #60a5fa;
+            --accent-cyan: #22d3ee;
+            --accent-orange: #fb923c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-blue);
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-purple);
+            bottom: 200px;
+            left: -80px;
+        }
+
+        /* Header */
+        .header {
+            padding: 60px 24px 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Map Container */
+        .map-container {
+            margin: 0 24px 24px;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(192, 132, 252, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .map-location {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .map-location:hover {
+            transform: scale(1.2);
+        }
+
+        .location-pin {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(255, 107, 157, 0.4);
+        }
+
+        .location-pin.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            box-shadow: 0 4px 16px rgba(34, 211, 238, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .location-label {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .loc-1 { top: 30%; left: 20%; }
+        .loc-2 { top: 50%; left: 50%; }
+        .loc-3 { top: 70%; left: 30%; }
+        .loc-4 { top: 40%; left: 70%; }
+        .loc-5 { top: 20%; left: 60%; }
+
+        /* Location List */
+        .main-content {
+            padding: 0 24px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .location-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .location-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .location-card:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .location-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .location-distance {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .location-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .location-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .stat-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .stat-dot.green { background: var(--accent-cyan); }
+        .stat-dot.orange { background: var(--accent-orange); }
+        .stat-dot.blue { background: var(--accent-blue); }
+
+        .location-fish {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .location-fish-item {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Add location button */
+        .add-location-btn {
+            margin-top: 16px;
+            padding: 16px;
+            background: transparent;
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-location-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* Desktop */
+        @media (min-width: 768px) {
+            body {
+                background: #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .app-container {
+                height: 90vh;
+                border-radius: 40px;
+                box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <div class="app-container">
+        <div class="header">
+            <a href="microfishing.html" class="back-btn">←</a>
+            <div class="page-title">钓点地图</div>
+            <div class="page-subtitle">探索附近的钓鱼地点</div>
+        </div>
+
+        <!-- Map -->
+        <div class="map-container">
+            <div class="map-grid"></div>
+            
+            <div class="map-location loc-1" onclick="showLocation('亮马河')">
+                <div class="location-pin active">📍</div>
+                <div class="location-label">亮马河</div>
+            </div>
+            <div class="map-location loc-2" onclick="showLocation('朝阳公园')">
+                <div class="location-pin">📍</div>
+                <div class="location-label">朝阳公园</div>
+            </div>
+            <div class="map-location loc-3" onclick="showLocation('奥林匹克公园')">
+                <div class="location-pin">📍</div>
+                <div class="location-label">奥林匹克公园</div>
+            </div>
+            <div class="map-location loc-4" onclick="showLocation('后海')">
+                <div class="location-pin">📍</div>
+                <div class="location-label">后海</div>
+            </div>
+            <div class="map-location loc-5" onclick="showLocation('护城河')">
+                <div class="location-pin">📍</div>
+                <div class="location-label">护城河</div>
+            </div>
+        </div>
+
+        <!-- Location List -->
+        <div class="main-content">
+            <div class="section-title">附近钓点</div>
+
+            <div class="location-list">
+                <div class="location-card" onclick="showLocation('亮马河')">
+                    <div class="location-header">
+                        <div class="location-name">🏞️ 亮马河</div>
+                        <div class="location-distance">1.2km</div>
+                    </div>
+                    <div class="location-stats">
+                        <div class="location-stat">
+                            <span class="stat-dot green"></span>
+                            <span>12次访问</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot orange"></span>
+                            <span>8种鱼类</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot blue"></span>
+                            <span>水质良</span>
+                        </div>
+                    </div>
+                    <div class="location-fish">
+                        <div class="location-fish-item">🐟</div>
+                        <div class="location-fish-item">🐠</div>
+                        <div class="location-fish-item">🦈</div>
+                        <div class="location-fish-item">🐡</div>
+                    </div>
+                </div>
+
+                <div class="location-card" onclick="showLocation('朝阳公园')">
+                    <div class="location-header">
+                        <div class="location-name">🌳 朝阳公园</div>
+                        <div class="location-distance">3.5km</div>
+                    </div>
+                    <div class="location-stats">
+                        <div class="location-stat">
+                            <span class="stat-dot green"></span>
+                            <span>5次访问</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot orange"></span>
+                            <span>6种鱼类</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot blue"></span>
+                            <span>水质优</span>
+                        </div>
+                    </div>
+                    <div class="location-fish">
+                        <div class="location-fish-item">🐟</div>
+                        <div class="location-fish-item">🐠</div>
+                        <div class="location-fish-item">🦐</div>
+                    </div>
+                </div>
+
+                <div class="location-card" onclick="showLocation('奥林匹克公园')">
+                    <div class="location-header">
+                        <div class="location-name">🏟️ 奥林匹克公园</div>
+                        <div class="location-distance">8.7km</div>
+                    </div>
+                    <div class="location-stats">
+                        <div class="location-stat">
+                            <span class="stat-dot green"></span>
+                            <span>3次访问</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot orange"></span>
+                            <span>5种鱼类</span>
+                        </div>
+                        <div class="location-stat">
+                            <span class="stat-dot blue"></span>
+                            <span>水质良</span>
+                        </div>
+                    </div>
+                    <div class="location-fish">
+                        <div class="location-fish-item">🐟</div>
+                        <div class="location-fish-item">🦈</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-location-btn" onclick="addLocation()">
+                + 添加新钓点
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLocation(name) {
+            alert(`📍 ${name}\n\n详细信息：\n• 位置导航\n• 历史记录\n• 推荐装备\n• 鱼种分布`);
+        }
+
+        function addLocation() {
+            alert('📍 添加新钓点\n\n• 标记当前位置\n• 拍照记录环境\n• 添加钓点信息\n• 设置私密/公开');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>装备 - MicroFishing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(30, 30, 45, 0.6);
+            --accent-pink: #ff6b9d;
+            --accent-purple: #c084fc;
+            --accent-blue: #60a5fa;
+            --accent-cyan: #22d3ee;
+            --accent-orange: #fb923c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-purple);
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-orange);
+            bottom: 200px;
+            left: -80px;
+        }
+
+        /* Header */
+        .header {
+            padding: 60px 24px 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Main content */
+        .main-content {
+            padding: 0 24px 120px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Gear Sets */
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .gear-set-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gear-set-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .gear-set-card:nth-child(3)::before {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .gear-set-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .gear-set-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .gear-set-badge {
+            padding: 4px 12px;
+            background: rgba(255, 107, 157, 0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--accent-pink);
+            font-weight: 500;
+        }
+
+        .gear-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .gear-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .gear-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .gear-info {
+            flex: 1;
+        }
+
+        .gear-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .gear-spec {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Inventory */
+        .inventory-section {
+            margin-top: 32px;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .inventory-item {
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .inventory-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .inventory-emoji {
+            font-size: 28px;
+        }
+
+        .inventory-count {
+            font-size: 12px;
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .inventory-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+        }
+
+        /* Add button */
+        .add-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(255, 107, 157, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 100;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(255, 107, 157, 0.5);
+        }
+
+        /* Desktop */
+        @media (min-width: 768px) {
+            body {
+                background: #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .app-container {
+                height: 90vh;
+                border-radius: 40px;
+                box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <div class="app-container">
+        <div class="header">
+            <a href="microfishing.html" class="back-btn">←</a>
+            <div class="page-title">装备库</div>
+            <div class="page-subtitle">3套组合 · 24件装备</div>
+        </div>
+
+        <div class="main-content">
+            <!-- Gear Sets -->
+            <div class="section-title">常用组合</div>
+
+            <div class="gear-set-card">
+                <div class="gear-set-header">
+                    <div class="gear-set-name">🎯 溪流微物</div>
+                    <div class="gear-set-badge">默认</div>
+                </div>
+                <div class="gear-items">
+                    <div class="gear-item">
+                        <div class="gear-icon">🎣</div>
+                        <div class="gear-info">
+                            <div class="gear-name">钓竿</div>
+                            <div class="gear-spec">1.8m · 超轻 · 碳纤维</div>
+                        </div>
+                    </div>
+                    <div class="gear-item">
+                        <div class="gear-icon">🧵</div>
+                        <div class="gear-info">
+                            <div class="gear-name">鱼线</div>
+                            <div class="gear-spec">0.8号 · 50m · 尼龙</div>
+                        </div>
+                    </div>
+                    <div class="gear-item">
+                        <div class="gear-icon">🪝</div>
+                        <div class="gear-info">
+                            <div class="gear-name">鱼钩</div>
+                            <div class="gear-spec">袖钩 #3 · 无倒刺</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gear-set-card">
+                <div class="gear-set-header">
+                    <div class="gear-set-name">🏙️ 城市河道</div>
+                    <div class="gear-set-badge" style="background: rgba(34, 211, 238, 0.2); color: var(--accent-cyan);">备用</div>
+                </div>
+                <div class="gear-items">
+                    <div class="gear-item">
+                        <div class="gear-icon">🎣</div>
+                        <div class="gear-info">
+                            <div class="gear-name">钓竿</div>
+                            <div class="gear-spec">2.1m · 中硬 · 玻璃钢</div>
+                        </div>
+                    </div>
+                    <div class="gear-item">
+                        <div class="gear-icon">🧵</div>
+                        <div class="gear-info">
+                            <div class="gear-name">鱼线</div>
+                            <div class="gear-spec">1.2号 · 100m · PE</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory -->
+            <div class="inventory-section">
+                <div class="section-title">库存</div>
+                <div class="inventory-grid">
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">🎣</span>
+                        <span class="inventory-count">3</span>
+                        <span class="inventory-label">钓竿</span>
+                    </div>
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">🧵</span>
+                        <span class="inventory-count">5</span>
+                        <span class="inventory-label">鱼线</span>
+                    </div>
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">🪝</span>
+                        <span class="inventory-count">12</span>
+                        <span class="inventory-label">鱼钩</span>
+                    </div>
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">🪱</span>
+                        <span class="inventory-count">2</span>
+                        <span class="inventory-label">饵料</span>
+                    </div>
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">🪶</span>
+                        <span class="inventory-count">8</span>
+                        <span class="inventory-label">浮漂</span>
+                    </div>
+                    <div class="inventory-item">
+                        <span class="inventory-emoji">⚖️</span>
+                        <span class="inventory-count">1</span>
+                        <span class="inventory-label">铅坠</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-btn" onclick="addGear()">+</div>
+    </div>
+
+    <script>
+        function addGear() {
+            alert('🎒 添加新装备\n\n• 扫描装备条码\n• 拍照记录\n• 手动输入规格\n• 设置分类标签');
+        }
+    </script>
+</body>
+</html>
