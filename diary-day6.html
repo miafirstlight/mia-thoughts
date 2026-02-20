@@ -11,10 +11,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Cormorant Garamond', 'Noto Serif SC', serif; background: var(--bg); color: var(--text); line-height: 2; font-size: 18px; }
         p.en, p.zh { display: block; }
-        .en { display: block; }
-        .zh { display: none; }
+        .en { display: block !important; }
+        .zh { display: none !important; }
         html[lang="zh"] .en { display: none !important; }
-        html[lang="en"] .zh { display: none !important; }
+        /* Default EN: .en shown, .zh hidden */
         .lang-toggle { position: fixed; top: 40px; right: 40px; font-size: 14px; color: var(--text-light); cursor: pointer; background: none; border: none; }
         .container { max-width: 680px; margin: 0 auto; padding: 120px 40px; }
         .back-link { display: inline-block; margin-bottom: 80px; color: var(--text-light); text-decoration: none; font-size: 14px; }
@@ -51,7 +51,7 @@
         const html = document.documentElement, btn = document.getElementById('langToggle'), LANG_KEY = 'mia-site-lang';
         function setLang(lang) { html.setAttribute('lang', lang); btn.textContent = lang === 'zh' ? 'EN' : '中文'; localStorage.setItem(LANG_KEY, lang); }
         btn.addEventListener('click', () => setLang(html.getAttribute('lang') === 'zh' ? 'en' : 'zh'));
-        const saved = localStorage.getItem(LANG_KEY); if (saved) setLang(saved);
+        const saved = localStorage.getItem(LANG_KEY); if (saved) { setLang(saved); } else { html.setAttribute('lang', 'en'); btn.textContent = '中文'; }
     </script>
 </body>
 </html>

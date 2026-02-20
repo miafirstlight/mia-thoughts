@@ -292,7 +292,12 @@
         });
 
         const saved = localStorage.getItem(LANG_KEY);
-        if (saved) setLang(saved);
+        if (saved) {
+            setLang(saved);
+        } else {
+            html.setAttribute('lang', 'en');
+            btn.textContent = '中文';
+        }
 
         const customTokens = localStorage.getItem('mia-design-tokens');
         if (customTokens) {

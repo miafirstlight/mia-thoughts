@@ -34,10 +34,13 @@
             font-size: 14px;
         }
 
-        /* Language switching - FIXED */
-        .en-text, .zh-text { display: inline; }
-        html[lang="en"] .zh-text { display: none !important; }
+        /* Language switching - DEFAULT ENGLISH */
+        .en-text { display: inline !important; }
+        .zh-text { display: none !important; }
+        
+        /* When Chinese is selected */
         html[lang="zh"] .en-text { display: none !important; }
+        html[lang="zh"] .zh-text { display: inline !important; }
         
         .container { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
         
@@ -568,8 +571,15 @@
             event.target.classList.add('active');
         }
 
+        // Default to English, button shows "中文" to switch to Chinese
         const saved = localStorage.getItem(LANG_KEY);
-        if (saved) setLang(saved);
+        if (saved) {
+            setLang(saved);
+        } else {
+            // No saved preference, default to English
+            html.setAttribute('lang', 'en');
+            btn.textContent = '中文';
+        }
 
         // Load design system tokens
         const customTokens = localStorage.getItem('mia-design-tokens');

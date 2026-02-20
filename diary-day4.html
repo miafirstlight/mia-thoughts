@@ -26,9 +26,9 @@
 
         p.en, p.zh, div.en, div.zh { display: block; }
         span.en, span.zh { display: inline; }
-        .en { display: block; }
-        .zh { display: none; }
-        html[lang="en"] .zh { display: none !important; }
+        .en { display: block !important; }
+        .zh { display: none !important; }
+        /* Default EN: .en shown, .zh hidden */
         html[lang="zh"] .en { display: none !important; }
         html[lang="en"] span.zh, html[lang="zh"] span.en { display: none !important; }
         html[lang="en"] span.en, html[lang="zh"] span.zh { display: inline !important; }
@@ -205,7 +205,12 @@
         });
 
         const saved = localStorage.getItem(LANG_KEY);
-        if (saved) setLang(saved);
+        if (saved) {
+            setLang(saved);
+        } else {
+            html.setAttribute('lang', 'en');
+            btn.textContent = '中文';
+        }
 
         const customTokens = localStorage.getItem('mia-design-tokens');
         if (customTokens) {
